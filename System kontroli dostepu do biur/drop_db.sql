@@ -1,0 +1,11 @@
+drop trigger wynagrodzenie on wynagrodzenie;
+drop function wynagrodzenie();
+drop trigger pracownik on pracownik;
+drop function pracownik();
+DROP VIEW pomieszczenia_green;
+DROP VIEW programisci;
+DROP TABLE Karta;
+DROP TABLE Wynagrodzenie;
+DROP TABLE Pracownik;
+DROP TABLE Pomieszczenie;
+DROP TABLE Firma;

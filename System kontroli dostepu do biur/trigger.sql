@@ -1,0 +1,38 @@
+-- WYZWALACZ KTORY ODDZIALYWUJE NA TABELE WYNAGRODZENIE, NIE POZWALA ON NAM WPORWADZIC WIEKSZEJ WARTOSCI WYNAGRODZENIA NETTO OD BRUTTO
+
+CREATE FUNCTION wynagrodzenie() RETURNS trigger AS $wynagrodzenie$
+	BEGIN
+		IF NEW.Pensja_netto > OLD.Pensja_brutto THEN
+			RAISE EXCEPTION 'Wynagrodzenie Netto nie moze byc wieksze od brutto';
+
+		ELSIF NEW.Pensja_netto < 0 THEN
+			RAISE EXCEPTION 'Wynagrodzenie nie może być ujemne';
+		END IF;
+		RETURN NEW;
+	END;
+$wynagrodzenie$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER wynagrodzenie BEFORE INSERT OR UPDATE ON wynagrodzenie                    
+FOR EACH ROW EXECUTE PROCEDURE wynagrodzenie();
+
+
+
+-- WYZWALACZ KTORY ODDZIALYWUJE NA TABELE PRACOWNIK, KOORDYNUJE ON POPRAWNOSC PRZYPISYWANIA NUMERU KONTAKTOWEGO DO PRACOWNIKA (W TYM PRZYPADKU NUMERU TELEFONU), NIE MOZE BYC ON WIEKSZY ORAZ MNIEJSZY NIZ 9 CYFR.
+
+CREATE OR REPLACE FUNCTION pracownik() RETURNS TRIGGER AS $pracownik$
+	BEGIN
+		IF NEW.Nr_kontaktowy > 999999999 OR NEW.Nr_kontaktowy < 100000000 THEN
+			RAISE EXCEPTION 'Podany nr_kontaktowy jest nieprawidlowy';
+		END IF;
+		
+		IF OLD.Nr_kontaktowy > 999999999 OR OLD.Nr_kontaktowy < 100000000 THEN
+			RAISE EXCEPTION 'Podany nr_kontaktowy jest nieprawidlowy';
+		END IF;
+		RETURN NEW;
+	END;
+$pracownik$ LANGUAGE plpgsql;
+
+CREATE TRIGGER pracownik BEFORE INSERT OR UPDATE ON pracownik
+FOR EACH ROW EXECUTE PROCEDURE pracownik();
+
